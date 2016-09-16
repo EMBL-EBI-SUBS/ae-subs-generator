@@ -176,7 +176,7 @@ public class ArrayExpressSubmissionGenerationService implements SubmissionGenera
 
         Files.createDirectories(Paths.get(dirName));
 
-        String fileName = dirName + File.separator + accession + ".json";
+        String fileName = dirName + File.separator + accession + "."+releaseDate.getTime()+".json";
         File outputFile = new File(fileName);
 
         objectMapper.writerWithDefaultPrettyPrinter().writeValue(outputFile, submission);
