@@ -8,7 +8,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.io.IOException;
-import java.nio.file.*;
+import java.nio.file.FileVisitResult;
+import java.nio.file.FileVisitor;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -19,14 +22,13 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(classes = SubGenApp.class)
+@SpringBootTest(classes = SubGenTestApp.class)
 public class ArrayExpressSubGenTest {
 
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
     @Autowired
     ArrayExpressSubmissionGenerationService submissionGenerationService;
-
 
     @Test
     public void testDateRange() throws IOException, ParseException {
@@ -42,7 +44,7 @@ public class ArrayExpressSubGenTest {
         assertThat("Files made", jsonFilePath.size(), equalTo(1));
         assertThat("File name", jsonFilePath.get(0).toFile().getName(),equalTo("E-MTAB-4517.json"));
 
-        if (false) {
+        if (true) {
             Files.walkFileTree(dir, new FileVisitor<Path>() {
                 @Override
                 public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {

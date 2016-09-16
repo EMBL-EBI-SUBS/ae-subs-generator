@@ -4,9 +4,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class SubGenApp {
+public class SubGenTestApp {
 
     public static void main(String[] args) {
-        SpringApplication.run(SubGenApp.class, args);
+        SpringApplication.run(SubGenTestApp.class, args);
     }
 }

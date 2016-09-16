@@ -9,15 +9,13 @@ import uk.ac.ebi.subs.data.submittable.Submission;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.text.ParseException;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(classes = SubGenApp.class)
+@SpringBootTest(classes = SubGenTestApp.class)
 public class AeMageTabConverterTest {
 
     @Autowired
@@ -28,17 +26,13 @@ public class AeMageTabConverterTest {
 
         ClassLoader classLoader = getClass().getClassLoader();
         File file = new File(classLoader.getResource("E-MTAB-4222.idf.txt").getFile());
-        System.out.println(file.getAbsolutePath());
-
 
         Submission sub = aeMageTabConverter.mageTabToSubmission(file.toURI().toURL());
 
         assertThat("Studies expected", sub.getStudies().size(), equalTo(1));
         assertThat("Samples expected", sub.getSamples().size(), equalTo(72));
         assertThat("Assays expected", sub.getAssays().size(), equalTo(72));
-        assertThat("AssayData expected", sub.getAssayData().size(), equalTo(144));
-
-
+        assertThat("AssayData expected", sub.getAssayData().size(), equalTo(72));
 
     }
 }

@@ -104,10 +104,9 @@ public class ArrayExpressSubmissionGenerationService implements SubmissionGenera
     AeMageTabConverter aeMageTabConverter;
 
     public void processAccDate(String accession, Date releaseDate, Path targetDir) throws IOException, uk.ac.ebi.arrayexpress2.magetab.exception.ParseException, ParseException {
-        System.out.println(String.join("\t", accession, releaseDate.toString(), targetDir.toString()));
+        logger.debug(String.join("\t", accession, releaseDate.toString(), targetDir.toString()));
 
         String url = "http://www.ebi.ac.uk/arrayexpress/json/v2/files/" + accession;
-        System.out.println(url);
         ArrayExpressFilesResponse response = restTemplate.getForObject(url, ArrayExpressFilesResponse.class);
 
         Submission submission = aeMageTabConverter.mageTabToSubmission(response.idfUrl());
@@ -162,7 +161,7 @@ public class ArrayExpressSubmissionGenerationService implements SubmissionGenera
         InputStream is = new BufferedInputStream(new FileInputStream(file));
         Charset cs = Charset.forName(new TikaEncodingDetector().guessEncoding(is));
         is.close();
-        System.out.println(cs);
+        logger.debug("Charset guessed {}", cs);
         return cs;
     }
 
@@ -181,7 +180,7 @@ public class ArrayExpressSubmissionGenerationService implements SubmissionGenera
         File outputFile = new File(fileName);
 
         objectMapper.writerWithDefaultPrettyPrinter().writeValue(outputFile, submission);
-        System.out.println(outputFile);
+        logger.debug("Output target: {}", outputFile);
     }
 
 
