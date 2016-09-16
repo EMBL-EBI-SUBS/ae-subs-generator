@@ -37,39 +37,36 @@ public class ArrayExpressSubGenTest {
         Path dir = Files.createTempDirectory("aeTesting");
 
         // date range sufficient to get E-MTAB-4517 only
-        submissionGenerationService.writeSubmissionsFromRange(sdf.parse("2016-09-10"),sdf.parse("2016-09-10"),dir);
+        submissionGenerationService.writeSubmissionsFromRange(sdf.parse("2016-09-10"), sdf.parse("2016-09-10"), dir);
 
         List<Path> jsonFilePath = Files.walk(dir).filter(p -> p.toFile().isFile()).collect(Collectors.toList());
 
         assertThat("Files made", jsonFilePath.size(), equalTo(1));
-        assertThat("File name", jsonFilePath.get(0).toFile().getName(),equalTo("E-MTAB-4517.json"));
+        assertThat("File name", jsonFilePath.get(0).toFile().getName(), equalTo("E-MTAB-4517.json"));
 
-        if (true) {
-            Files.walkFileTree(dir, new FileVisitor<Path>() {
-                @Override
-                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-                    return FileVisitResult.CONTINUE;
-                }
+        Files.walkFileTree(dir, new FileVisitor<Path>() {
+            @Override
+            public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+                return FileVisitResult.CONTINUE;
+            }
 
-                @Override
-                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                    Files.delete(file);
-                    System.out.println("deleted " + file);
-                    return FileVisitResult.CONTINUE;
-                }
+            @Override
+            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                Files.delete(file);
+                return FileVisitResult.CONTINUE;
+            }
 
-                @Override
-                public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
-                    return FileVisitResult.CONTINUE;
-                }
+            @Override
+            public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
+                return FileVisitResult.CONTINUE;
+            }
 
-                @Override
-                public FileVisitResult postVisitDirectory(Path path, IOException exc) throws IOException {
-                    Files.delete(path);
-                    System.out.println("deleted " + path);
-                    return FileVisitResult.CONTINUE;
-                }
-            });
-        }
+            @Override
+            public FileVisitResult postVisitDirectory(Path path, IOException exc) throws IOException {
+                Files.delete(path);
+                return FileVisitResult.CONTINUE;
+            }
+        });
+
     }
 }
