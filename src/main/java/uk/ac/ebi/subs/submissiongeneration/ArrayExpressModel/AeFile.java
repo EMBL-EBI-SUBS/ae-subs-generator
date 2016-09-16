@@ -1,6 +1,7 @@
-package uk.ac.ebi.subs.submissiongeneration;
+package uk.ac.ebi.subs.submissiongeneration.ArrayExpressModel;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import uk.ac.ebi.subs.submissiongeneration.OptionalArrayDeserializer;
 
 import java.util.ArrayList;
 import java.util.List;

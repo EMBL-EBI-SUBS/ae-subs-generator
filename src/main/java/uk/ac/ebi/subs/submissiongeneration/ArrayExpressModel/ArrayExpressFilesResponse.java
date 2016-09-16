@@ -1,4 +1,4 @@
-package uk.ac.ebi.subs.submissiongeneration;
+package uk.ac.ebi.subs.submissiongeneration.ArrayExpressModel;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -20,7 +20,7 @@ public class ArrayExpressFilesResponse {
                 stream().filter(f -> f.getKind() != null);
     }
 
-    URL idfUrl() throws MalformedURLException {
+    public URL idfUrl() throws MalformedURLException {
         return new URL(fileStream().filter(f -> f.getKind().contains("idf")).map(f -> f.getUrl()).findFirst().get());
     }
 

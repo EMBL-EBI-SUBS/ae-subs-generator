@@ -1,4 +1,4 @@
-package uk.ac.ebi.subs.submissiongeneration;
+package uk.ac.ebi.subs.submissiongeneration.ArrayExpressModel;
 
 /**
  * Created by davidr on 12/09/2016.

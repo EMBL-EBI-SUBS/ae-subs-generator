@@ -1,0 +1,38 @@
+Comment[ArrayExpressAccession]	E-MTAB-4222				
+MAGE-TAB Version	1.1				
+Investigation Title	RNA-seq of coding RNA of wheat heads from 3, 6, 12, 24, 36, and 48 hours after inoculation of fungal pathogen Fusarium graminearum or mock inoculation				
+Comment[Submitted Name]	RNA-seq of coding RNA of wheat heads from 3, 6, 12, 24, 36, and 48 hours after inoculation of fungal pathogen Fusarium graminearum or mock inoculation				
+Experiment Description	Near isogenic wheat lines(NILs), differing in the presence of both or none of the FHB-resistance QTL Fhb1 and Qfhs.ifa-5A, have been sequenced using Illumina HiSeq2000 under disease pressure (3, 6, 12, 24, 36, 48 hai) as well as with mock-inoculation, to discern transcriptional differences induced by Fusarium graminearum. The NILs are BC5F2 lines generated from the Mexican Spring wheat line  CM-82036, the resistance QTL donor line, as recurrent background and the susceptible German Spring wheat line Remus as the donor of the susceptible QTL alleles.				
+Experimental Design	time series design	stimulus or stress design	strain or line design	pathogenicity design	replicate design
+Experimental Design Term Source REF	EFO	EFO	EFO	EFO	EFO
+Experimental Design Term Accession Number	EFO_0001779	EFO_0001762	EFO_0001754	EFO_0001761	EFO_0001776
+Experimental Factor Name	infect	time	cultivar		
+Experimental Factor Type	infect	time	cultivar		
+Experimental Factor Term Source REF	EFO	EFO	EFO		
+Experimental Factor Term Accession Number	OBI_1110021	EFO_0000721	EFO_0005136		
+Person Last Name	Nussbaumer	Schweiger			
+Person First Name	Thomas	Wolfgang			
+Person Mid Initials					
+Person Email	thomas.nussbaumer@univie.ac.at	wolfgang.schweiger@boku.ac.at			
+Person Phone					
+Person Fax					
+Person Address	Althanstrae 14 University of Vienna, 1090 Vienna, Austria	Konrad-Lorenz-Strae 20 Tulln, 3430, Austria			
+Person Affiliation	Division of Computational System Biology, Department of Microbiology and Ecosystem Science	Institute for Biotechnology in Plant Production, IFA-Tulln, University of Natural Resources and Life Sciences,			
+Person Roles	submitter				
+Date of Experiment	2013-12-16				
+Public Release Date	2016-08-31				
+Protocol Name	P-MTAB-48138	P-MTAB-48139	P-MTAB-48140	nucleic acid extraction protocol	
+Protocol Type	nucleic acid sequencing protocol	treatment protocol	nucleic acid library construction protocol	nucleic acid extraction protocol	
+Protocol Term Source REF	EFO	EFO	EFO	EFO	
+Protocol Term Accession Number	EFO_0004170	EFO_0003969	EFO_0004184	EFO_0002944	
+Protocol Description	Samples were Illumina sequenced on HiSeq2000/MiSeq machines (Eurofins MGW) yielding at least 20M 100bp paired-end reads per samples.	F. graminearum conidia spores from strain IFA65 required for inoculation were produced on defined SNA medium under UV-light at 25C. After two weeks conidia were harvested and diluted to 50,000 conidia/mL in water. Aliquots were stored at  80C. The inoculation experiment was conducted under controlled light house conditions in December 2013 (Kugler et al (2013, PMID: 24152241)). Briefly, twelve florets from 6 central spikelets (the two basal florets) were inoculated at anthesis with 10 ul of spore suspension (500 conidia) or mock. Plant heads were moistened and covered in plastic bags until sampling but no longer than 24 hours to provide favorable humid conditions for the fungus to germinate. Plants were sampled at 3, 6, 12, 24, 36 and 48 hours after inoculation by shock-freezing the inoculated section of the head including the rachis. Only palea and lemma of the inoculated florets were sampled including the respective part of the rachis. In total 360 plants were inoculated comprising two NILs, six time points, two treatments and three replicates each including five pooled samples. 20 heads per NIL remained undissected and remained for phenotyping the total number of diseased spikelets per head 21 days after inoculation in the greenhouse.   	Each sample represents one experimental condition (pathogen/mock; time points; genotype). Each experimental condition has been replicated 3x.	Frozen samples were ground under sterile conditions and pooled to comprise a single sample/data point as described in Kugler et al (2013, PMID: 24152241). 100 mg frozen tissue was used to extract RNA using the RNeasy Plant Mini Kit (Qiagen, Venlo, Netherlands). Quality and quantity was checked on an an automated electrophoresis-system (Experion, #701-7000, Bio-Rad, Hercules, CA, US).	
+Protocol Hardware	Illumina HiSeq 2000				
+Protocol Software					
+Term Source Name	EFO				
+Term Source File	http://www.ebi.ac.uk/efo/				
+Term Source Version					
+Comment[AEExperimentType]	RNA-seq of coding RNA				
+Comment[AEAnonymousReview]	yes				
+Comment[SequenceDataURI]	http://www.ebi.ac.uk/ena/data/view/ERR1201749-ERR1201820				
+Comment[SecondaryAccession]	ERP013829				
+SDRF File	E-MTAB-4222.sdrf.txt				

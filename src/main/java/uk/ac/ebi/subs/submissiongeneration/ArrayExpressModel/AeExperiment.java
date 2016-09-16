@@ -1,4 +1,4 @@
-package uk.ac.ebi.subs.submissiongeneration;
+package uk.ac.ebi.subs.submissiongeneration.ArrayExpressModel;
 
 import java.util.ArrayList;
 import java.util.List;
