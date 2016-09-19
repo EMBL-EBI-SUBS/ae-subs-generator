@@ -33,6 +33,7 @@ public class AeMageTabConverter {
     );
 
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+    SimpleDateFormat alternateSdf = new SimpleDateFormat("dd/MM/yyyy");
 
     public Submission mageTabToSubmission(URL mageTabUrl) throws ParseException {
         MAGETABParser parser = new MAGETABParser();
@@ -398,12 +399,19 @@ public class AeMageTabConverter {
         study.setTitle(idf.investigationTitle);
         study.setDescription(idf.experimentDescription);
 
-
+        Date publicReleaseDate;
         try {
-            study.setReleaseDate(sdf.parse(idf.publicReleaseDate));
+            publicReleaseDate = sdf.parse(idf.publicReleaseDate);
         } catch (java.text.ParseException e) {
-            throw new RuntimeException(e);
+            try {
+                publicReleaseDate = alternateSdf.parse(idf.publicReleaseDate);
+            }
+            catch(java.text.ParseException e2) {
+                throw new RuntimeException("Could not parse date "+idf.publicReleaseDate+" with patterns yyyy-MM-dd or dd/MM/yyyy",e2);
+            }
+
         }
+        study.setReleaseDate(publicReleaseDate);
 
         buildPublications(idf, study);
 
