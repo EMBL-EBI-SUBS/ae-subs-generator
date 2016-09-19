@@ -9,21 +9,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import uk.ac.ebi.arrayexpress2.magetab.datamodel.IDF;
-import uk.ac.ebi.arrayexpress2.magetab.datamodel.MAGETABInvestigation;
-import uk.ac.ebi.arrayexpress2.magetab.datamodel.SDRF;
-import uk.ac.ebi.arrayexpress2.magetab.datamodel.graph.Node;
-import uk.ac.ebi.arrayexpress2.magetab.datamodel.sdrf.node.*;
-import uk.ac.ebi.arrayexpress2.magetab.datamodel.sdrf.node.attribute.ArrayDesignAttribute;
-import uk.ac.ebi.arrayexpress2.magetab.datamodel.sdrf.node.attribute.CharacteristicsAttribute;
-import uk.ac.ebi.arrayexpress2.magetab.datamodel.sdrf.node.attribute.FactorValueAttribute;
-import uk.ac.ebi.arrayexpress2.magetab.parser.MAGETABParser;
-import uk.ac.ebi.subs.data.component.*;
-import uk.ac.ebi.subs.data.submittable.*;
+import uk.ac.ebi.subs.data.submittable.Submission;
 import uk.ac.ebi.subs.submissiongeneration.ArrayExpressModel.ArrayExpressFilesResponse;
 
 import java.io.*;
-import java.io.File;
 import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
@@ -33,7 +22,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
 import java.util.stream.Stream;
 
 @Service
@@ -63,11 +52,17 @@ public class ArrayExpressSubmissionGenerationService implements SubmissionGenera
 
     @Override
     public void writeSubmissionsFromRange(Date start, Date end, Path targetDir) {
+        logger.debug("writing submissions to {} for date range {} to {}", targetDir, start, end);
+
         try {
             streamTsv()
                     .filter(stringDatePair -> {
                         Date d = stringDatePair.getSecond();
-                        return (d.before(end) || d.equals(end)) && (d.after(start) || d.equals(start));
+
+                        boolean dateBeforeEnd = (d.before(end) || d.equals(end));
+                        boolean dateAfterStart = (d.after(start) || d.equals(start));
+
+                        return dateBeforeEnd && dateAfterStart;
                     }).forEach(p -> {
                 try {
                     processAccDate(p.getFirst(), p.getSecond(), targetDir);
@@ -86,6 +81,7 @@ public class ArrayExpressSubmissionGenerationService implements SubmissionGenera
 
 
     }
+
 
     @Value("${arrayExpressTsvUrl:https://www.ebi.ac.uk/arrayexpress/ArrayExpress-Experiments.txt?keywords=&organism=&exptype%5B%5D=&exptype%5B%5D=&array=&directsub=on}")
     URL arrayExpressTsvUrl;
@@ -176,11 +172,13 @@ public class ArrayExpressSubmissionGenerationService implements SubmissionGenera
 
         Files.createDirectories(Paths.get(dirName));
 
-        String fileName = dirName + File.separator + accession + "."+releaseDate.getTime()+".json";
+        String fileName = dirName + File.separator + accession + "." + releaseDate.getTime() + ".json";
         File outputFile = new File(fileName);
 
-        objectMapper.writerWithDefaultPrettyPrinter().writeValue(outputFile, submission);
+        System.out.println("Writing " + outputFile.getAbsolutePath().toString());
+        objectMapper.writeValue(outputFile, submission);
         logger.debug("Output target: {}", outputFile);
+
     }
 
 

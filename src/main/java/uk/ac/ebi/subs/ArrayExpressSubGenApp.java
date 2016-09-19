@@ -15,6 +15,19 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+/**
+ * Application to get Direct ArrayExpress submissions released within a date range
+ * and convert them to USI Subs object model json file, place in the target directory
+ *
+ * Create the jar with the jar and bootRepackage then run it with the command line like this:
+ *
+ * java -jar subs/ae-subs-generator/build/libs/ae-subs-generator-1.0.0.jar
+ *      --targetDir=ArrayExpressSubs/
+ *      --startDate=2015-01-01
+ *      --endDate=2015-12-31
+ *
+ * Would retreive all submissions from 2015
+ */
 @SpringBootApplication
 public class ArrayExpressSubGenApp implements CommandLineRunner {
 
@@ -26,31 +39,34 @@ public class ArrayExpressSubGenApp implements CommandLineRunner {
     @Value("${targetDir:.}")
     String targetDir;
 
-    @Value("${startDate:empty}")
-    String startDateText;
+    @Value("${startDate:.}")
+    String startDate;
 
-    @Value("${endDate:empty}")
-    String endDateText;
+    @Value("${endDate:.}")
+    String endDate;
 
-    SimpleDateFormat simpleDateFormat = new SimpleDateFormat();
+    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     @Override
     public void run(String... args) {
 
-        Date startDate = null;
-        Date endDate = null;
+        Date startDateObj = null;
+        Date endDateObj = null;
 
         try {
-            if (startDateText != null && !startDateText.equals("empty")) {
-                startDate = simpleDateFormat.parse(startDateText);
+            if (this.startDate != null && !this.startDate.equals(".")) {
+                startDateObj = simpleDateFormat.parse(this.startDate);
             }
-            if (endDateText != null && !startDateText.equals("empty")) {
-                endDate = simpleDateFormat.parse(endDateText);
+            if (this.endDate != null && !this.startDate.equals(".")) {
+                endDateObj = simpleDateFormat.parse(this.endDate);
             }
-        }
-        catch (ParseException e){
-            System.err.println("Cannot parse date: "+e.getMessage());
+        } catch (ParseException e) {
+            System.err.println("Cannot parse date: " + e.getMessage());
             System.exit(1);
+        }
+
+        if (targetDir == null || targetDir.equals(".")) {
+            targetDir = System.getProperty("user.dir"); //current working directory
         }
 
         Path targetDirPath = Paths.get(targetDir);
@@ -64,25 +80,33 @@ public class ArrayExpressSubGenApp implements CommandLineRunner {
             System.exit(1);
         }
 
-        if (startDate != null && endDate == null) {
-            endDate = new Date(); //make end date now
+        if (startDateObj != null && endDateObj == null) {
+            endDateObj = new Date(); //make end date now
         }
 
-        if (startDate != null && endDate != null && startDate.getTime() >= endDate.getTime()) {
+        if (startDateObj != null && endDateObj != null && startDateObj.getTime() > endDateObj.getTime()) {
             System.err.println("startDate must be before endDate");
             System.exit(1);
         }
 
-        if (startDate == null || endDate == null) {
-            logger.info("Starting submission generation from ArrayExpress, writing to {}", targetDirPath.toAbsolutePath());
+        if (startDateObj == null || endDateObj == null) {
+            System.out.println("Starting submission generation from ArrayExpress, writing to " + targetDirPath.toAbsolutePath());
 
-            submissionGenerationService.writeSubmissions(targetDirPath);
-        } else {
-            logger.info(
-                    "Starting submission generation from ArrayExpress, using submissions between {} and {}writing to {}"
-                    , startDate, endDate, targetDirPath.toAbsolutePath());
+            //submissionGenerationService.writeSubmissions(targetDirPath);
+        }
+        else {
+            System.out.println(
+                    String.join(" ",
+                            "Starting submission generation from ArrayExpress, using submissions between",
+                            simpleDateFormat.format(startDateObj),
+                            "and ",
+                            simpleDateFormat.format(endDateObj),
+                            " writing to ",
+                            targetDirPath.toAbsolutePath().toString()
+                    )
+            );
 
-            submissionGenerationService.writeSubmissionsFromRange(startDate,endDate,targetDirPath);
+            submissionGenerationService.writeSubmissionsFromRange(startDateObj, endDateObj, targetDirPath);
         }
 
     }
