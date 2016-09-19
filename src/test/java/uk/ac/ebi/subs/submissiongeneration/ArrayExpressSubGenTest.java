@@ -15,6 +15,7 @@ import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,14 +36,14 @@ public class ArrayExpressSubGenTest {
 
 
         Path dir = Files.createTempDirectory("aeTesting");
-
+        Date releaseDate = sdf.parse("2016-09-10");
         // date range sufficient to get E-MTAB-4517 only
-        submissionGenerationService.writeSubmissionsFromRange(sdf.parse("2016-09-10"), sdf.parse("2016-09-10"), dir);
+        submissionGenerationService.writeSubmissionsFromRange(releaseDate,releaseDate, dir);
 
         List<Path> jsonFilePath = Files.walk(dir).filter(p -> p.toFile().isFile()).collect(Collectors.toList());
 
         assertThat("Files made", jsonFilePath.size(), equalTo(1));
-        assertThat("File name", jsonFilePath.get(0).toFile().getName(), equalTo("E-MTAB-4517.json"));
+        assertThat("File name", jsonFilePath.get(0).toFile().getName(), equalTo("E-MTAB-4517."+releaseDate.getTime()+".json"));
 
         Files.walkFileTree(dir, new FileVisitor<Path>() {
             @Override
