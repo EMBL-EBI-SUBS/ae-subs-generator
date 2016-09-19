@@ -1,16 +1,29 @@
 package uk.ac.ebi.subs.submissiongeneration.ArrayExpressModel;
 
-/**
- * Created by davidr on 12/09/2016.
- */
-public class AeFilesWrapper {
-    AeExperiment experiment;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import uk.ac.ebi.subs.submissiongeneration.OptionalArrayDeserializer;
 
-    public AeExperiment getExperiment() {
+import java.util.ArrayList;
+import java.util.List;
+
+public class AeFilesWrapper {
+
+    @JsonDeserialize(using = AeExperimentListDeserializer.class)
+    List<AeExperiment> experiment;
+
+    public List<AeExperiment> getExperiment() {
         return experiment;
     }
 
-    public void setExperiment(AeExperiment experiment) {
+    public void setExperiment(List<AeExperiment> experiment) {
         this.experiment = experiment;
+    }
+
+    List<String> kind = new ArrayList<>();
+
+    public static class AeExperimentListDeserializer extends OptionalArrayDeserializer<AeExperiment> {
+        protected AeExperimentListDeserializer() {
+            super(AeExperiment.class);
+        }
     }
 }

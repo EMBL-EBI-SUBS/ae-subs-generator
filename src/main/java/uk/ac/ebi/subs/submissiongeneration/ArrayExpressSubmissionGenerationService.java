@@ -105,7 +105,7 @@ public class ArrayExpressSubmissionGenerationService implements SubmissionGenera
         String url = "http://www.ebi.ac.uk/arrayexpress/json/v2/files/" + accession;
         ArrayExpressFilesResponse response = restTemplate.getForObject(url, ArrayExpressFilesResponse.class);
 
-        Submission submission = aeMageTabConverter.mageTabToSubmission(response.idfUrl());
+        Submission submission = aeMageTabConverter.mageTabToSubmission(response.idfUrl(accession));
 
         writeSubmission(submission, accession, targetDir, releaseDate);
     }

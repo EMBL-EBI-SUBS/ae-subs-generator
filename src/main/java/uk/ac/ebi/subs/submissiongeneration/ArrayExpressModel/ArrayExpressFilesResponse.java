@@ -2,7 +2,7 @@ package uk.ac.ebi.subs.submissiongeneration.ArrayExpressModel;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.stream.Stream;
+import java.util.Optional;
 
 public class ArrayExpressFilesResponse {
     AeFilesWrapper files = new AeFilesWrapper();
@@ -15,13 +15,27 @@ public class ArrayExpressFilesResponse {
         this.files = files;
     }
 
-    Stream<AeFile> fileStream() {
-        return files.experiment.file.
-                stream().filter(f -> f.getKind() != null);
-    }
 
-    public URL idfUrl() throws MalformedURLException {
-        return new URL(fileStream().filter(f -> f.getKind().contains("idf")).map(f -> f.getUrl()).findFirst().get());
+    /**
+     * Get URL for IDF file from response
+     * <p>
+     * takes accession, as files endpoint sometimes includes extra experiments (e.g. as links)
+     *
+     * @param accession
+     * @return
+     * @throws MalformedURLException
+     */
+    public URL idfUrl(String accession) throws MalformedURLException {
+        Optional<String> url = files.experiment.stream()
+                .filter(e -> e.getAccession().equals(accession))
+                .flatMap(e -> e.getFile().stream())
+                .filter(f -> f.getKind() != null)
+                .filter(f -> f.getKind().contains("idf"))
+                .map(f -> f.getUrl())
+                .findFirst();
+
+
+        return new URL(url.get());
     }
 
 }
