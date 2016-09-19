@@ -2,7 +2,7 @@ apply plugin: 'java'
 
 jar {
     manifest {
-        attributes 'Main-Class': 'uk.ac.ebi.subs.StressTesterApplication'
+        attributes 'Main-Class': 'uk.ac.ebi.subs.ArrayExpressSubGenApp'
     }
 }
 
@@ -10,7 +10,10 @@ dependencies {
     compile("org.springframework.boot:spring-boot-starter")
     compile("org.springframework:spring-web")
     compile("org.springframework.boot:spring-boot-starter-logging")
+    compile("org.springframework.boot:spring-boot-starter-cache")
     compile("com.fasterxml.jackson.core:jackson-databind")
+
+    compile(group: 'uk.ac.ebi.ena.taxonomy', name: 'ena-taxonomy-client', version: '2.1.2')
 
     compile fileTree(dir: 'libs', include: '*.jar')
 

@@ -2,6 +2,7 @@ package uk.ac.ebi.subs.submissiongeneration;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.ac.ebi.arrayexpress2.magetab.datamodel.IDF;
 import uk.ac.ebi.arrayexpress2.magetab.datamodel.MAGETABInvestigation;
@@ -13,6 +14,8 @@ import uk.ac.ebi.arrayexpress2.magetab.datamodel.sdrf.node.attribute.Characteris
 import uk.ac.ebi.arrayexpress2.magetab.datamodel.sdrf.node.attribute.FactorValueAttribute;
 import uk.ac.ebi.arrayexpress2.magetab.exception.ParseException;
 import uk.ac.ebi.arrayexpress2.magetab.parser.MAGETABParser;
+import uk.ac.ebi.ena.taxonomy.client.TaxonomyClient;
+import uk.ac.ebi.ena.taxonomy.client.model.Taxon;
 import uk.ac.ebi.subs.data.component.*;
 import uk.ac.ebi.subs.data.submittable.*;
 
@@ -24,6 +27,9 @@ import java.util.*;
 public class AeMageTabConverter {
 
     private static final Logger logger = LoggerFactory.getLogger(ArrayExpressSubmissionGenerationService.class);
+
+    @Autowired
+    TaxonomyClient taxonomyClient;
 
     Set<String> protocolTypesTriggeringAssayData = new HashSet<>(
             Arrays.asList(
@@ -89,6 +95,7 @@ public class AeMageTabConverter {
                 assay.setAlias(studyRef.getAlias() + '~' + node.getNodeName());
                 assay.setStudyRef(studyRef);
                 assay.setSampleRef(sample.asLink());
+                assay.setArchive(Archive.ArrayExpress);
 
                 submission.getAssays().add(assay);
 
@@ -130,7 +137,6 @@ public class AeMageTabConverter {
                     handleProtocolRef(protocolApplicationNode,assay);
                     buildSingleAttribute("protocol ref", protocolApplicationNode.protocol, assay);
                 }
-                //TODO values?? protocolApplicationNode.values(); protocolApplicationNode.parameterValues;
                 break;
             case "scanname":
                 ScanNode scanNode = (ScanNode)node;
@@ -253,9 +259,14 @@ public class AeMageTabConverter {
 
         for (CharacteristicsAttribute characteristic : sourceNode.characteristics) {
 
-            if (characteristic.getAttributeType().equals("organism")) {
+            if (characteristic.getAttributeType().equals("characteristics[organism]")) {
                 sample.setTaxon(characteristic.getAttributeValue());
-                //TODO get taxonID
+
+                List<Taxon>  taxa = taxonomyClient.getTaxonByScientificName(characteristic.getAttributeValue());
+                for (Taxon taxon : taxa){
+                    sample.setTaxonId(taxon.getTaxId());
+                }
+
             } else {
                 buildSingleAttribute(characteristic, sample);
             }

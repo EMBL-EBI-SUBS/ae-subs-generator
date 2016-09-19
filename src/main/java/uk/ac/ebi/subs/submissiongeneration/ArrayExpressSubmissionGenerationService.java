@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import uk.ac.ebi.ena.taxonomy.client.TaxonomyClient;
 import uk.ac.ebi.subs.data.submittable.Submission;
 import uk.ac.ebi.subs.submissiongeneration.ArrayExpressModel.ArrayExpressFilesResponse;
 
@@ -98,6 +99,7 @@ public class ArrayExpressSubmissionGenerationService implements SubmissionGenera
 
     @Autowired
     AeMageTabConverter aeMageTabConverter;
+
 
     public void processAccDate(String accession, Date releaseDate, Path targetDir) throws IOException, uk.ac.ebi.arrayexpress2.magetab.exception.ParseException, ParseException {
         logger.debug(String.join("\t", accession, releaseDate.toString(), targetDir.toString()));

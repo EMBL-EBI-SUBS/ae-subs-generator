@@ -5,6 +5,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import uk.ac.ebi.subs.data.submittable.Sample;
 import uk.ac.ebi.subs.data.submittable.Submission;
 
 import java.io.File;
@@ -33,6 +34,11 @@ public class AeMageTabConverterTest {
         assertThat("Samples expected", sub.getSamples().size(), equalTo(72));
         assertThat("Assays expected", sub.getAssays().size(), equalTo(72));
         assertThat("AssayData expected", sub.getAssayData().size(), equalTo(72));
+
+        for (Sample s : sub.getSamples()){
+            assertThat("Taxon name",s.getTaxon(),equalTo("Triticum aestivum"));
+            assertThat("TaxonId",s.getTaxonId(),equalTo(4565L));
+        }
 
     }
 }
