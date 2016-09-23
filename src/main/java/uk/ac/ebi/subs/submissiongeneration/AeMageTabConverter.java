@@ -74,12 +74,12 @@ public class AeMageTabConverter {
 
         submission.getStudies().add(study);
 
-        convertSdrf(investigation.SDRF, submission, study.asRef(), protocolTypes);
+        convertSdrf(investigation.SDRF, submission, (StudyRef)study.asRef(), protocolTypes);
 
         return submission;
     }
 
-    void convertSdrf(SDRF sdrf, Submission submission, AbstractSubsRef<Study> studyRef, Map<String, String> protocolTypes) {
+    void convertSdrf(SDRF sdrf, Submission submission, StudyRef studyRef, Map<String, String> protocolTypes) {
 
         Collection<SourceNode> rootNodes = (Collection<SourceNode>) sdrf.getRootNodes();
 
@@ -94,7 +94,7 @@ public class AeMageTabConverter {
                 assay.getDomain().setName(studyRef.getDomain());
                 assay.setAlias(studyRef.getAlias() + '~' + node.getNodeName());
                 assay.setStudyRef(studyRef);
-                assay.setSampleRef(sample.asRef());
+                assay.setSampleRef((SampleRef) sample.asRef());
                 assay.setArchive(Archive.ArrayExpress);
 
                 submission.getAssays().add(assay);
@@ -239,7 +239,7 @@ public class AeMageTabConverter {
 
         ad.setDomain(assay.getDomain());
         ad.setArchive(Archive.ArrayExpress);
-        ad.setAssayRef(assay.asRef());
+        ad.setAssayRef((AssayRef) assay.asRef());
         ad.setAlias(assay.getAlias() + '~' + assayData.size() + 1);
 
         assayData.add(ad);
