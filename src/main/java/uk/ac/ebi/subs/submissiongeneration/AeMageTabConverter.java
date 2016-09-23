@@ -74,12 +74,12 @@ public class AeMageTabConverter {
 
         submission.getStudies().add(study);
 
-        convertSdrf(investigation.SDRF, submission, study.asLink(), protocolTypes);
+        convertSdrf(investigation.SDRF, submission, study.asRef(), protocolTypes);
 
         return submission;
     }
 
-    void convertSdrf(SDRF sdrf, Submission submission, SubsLink<Study> studyRef, Map<String, String> protocolTypes) {
+    void convertSdrf(SDRF sdrf, Submission submission, AbstractSubsRef<Study> studyRef, Map<String, String> protocolTypes) {
 
         Collection<SourceNode> rootNodes = (Collection<SourceNode>) sdrf.getRootNodes();
 
@@ -94,7 +94,7 @@ public class AeMageTabConverter {
                 assay.getDomain().setName(studyRef.getDomain());
                 assay.setAlias(studyRef.getAlias() + '~' + node.getNodeName());
                 assay.setStudyRef(studyRef);
-                assay.setSampleRef(sample.asLink());
+                assay.setSampleRef(sample.asRef());
                 assay.setArchive(Archive.ArrayExpress);
 
                 submission.getAssays().add(assay);
@@ -239,7 +239,7 @@ public class AeMageTabConverter {
 
         ad.setDomain(assay.getDomain());
         ad.setArchive(Archive.ArrayExpress);
-        ad.setAssayRef(assay.asLink());
+        ad.setAssayRef(assay.asRef());
         ad.setAlias(assay.getAlias() + '~' + assayData.size() + 1);
 
         assayData.add(ad);
@@ -247,7 +247,7 @@ public class AeMageTabConverter {
     }
 
 
-    Sample sampleFromNode(SourceNode sourceNode, SubsLink<Study> studyRef) {
+    Sample sampleFromNode(SourceNode sourceNode, AbstractSubsRef<Study> studyRef) {
         Sample sample = new Sample();
         sample.setDomain(new Domain());
         sample.getDomain().setName(studyRef.getDomain());
