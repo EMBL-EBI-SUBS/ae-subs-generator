@@ -58,7 +58,7 @@ public class ArrayExpressSubGenApp implements CommandLineRunner {
             if (this.startDate != null && !this.startDate.equals(".")) {
                 startDateObj = simpleDateFormat.parse(this.startDate);
             }
-            if (this.endDate != null && !this.startDate.equals(".")) {
+            if (this.endDate != null && !this.endDate.equals(".")) {
                 endDateObj = simpleDateFormat.parse(this.endDate);
             }
         } catch (ParseException e) {
