@@ -9,8 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import uk.ac.ebi.ena.taxonomy.client.TaxonomyClient;
-import uk.ac.ebi.subs.data.submittable.Submission;
+import uk.ac.ebi.subs.data.Submission;
 import uk.ac.ebi.subs.submissiongeneration.ArrayExpressModel.ArrayExpressFilesResponse;
 
 import java.io.*;
