@@ -59,11 +59,14 @@ public class AeMageTabConverter {
     Submission createSubmission(MAGETABInvestigation investigation) {
         Submission submission = new Submission();
 
+        List<Protocol> protocols = buildProtocols(investigation.IDF);
+        submission.getProtocols().addAll(protocols);
+
         Study study = createStudy(investigation.IDF);
 
         Map<String, String> protocolTypes = new HashMap<>();
-        for (Protocol protocol : study.getProtocols()) {
-            protocolTypes.put(protocol.getName(), protocol.getType());
+        for (Protocol protocol : protocols) {
+            protocolTypes.put(protocol.getTitle(), protocol.getType());
         }
 
         Optional<Contact> firstContact = study.getContacts().stream().filter(c -> c.getEmail() != null).findFirst();
@@ -72,6 +75,14 @@ public class AeMageTabConverter {
             submission.getSubmitter().setEmail(firstContact.get().getEmail());
             study.setDomain(submission.getDomain());
         }
+
+        for (Protocol p : protocols){
+            p.setDomain(submission.getDomain());
+            ProtocolRef pr = (ProtocolRef)p.asRef();
+            pr.setReferencedObject(p);
+            study.getProtocolRefs().add(pr);
+        }
+
 
         submission.getStudies().add(study);
 
@@ -364,12 +375,18 @@ public class AeMageTabConverter {
         attributes.getAttributes().add(a);
     }
 
-    void buildProtocols(IDF idf, Protocols protocols) {
+    List<Protocol> buildProtocols(IDF idf) {
+        List<Protocol> protocols = new ArrayList<>();
+
 
         for (int i = 0; i < idf.protocolName.size(); i++) {
             Protocol p = new Protocol();
 
-            p.setName(stringPresent(idf.protocolName, i));
+            p.setAlias(UUID.randomUUID().toString());
+
+            p.setArchive(Archive.ArrayExpress);
+
+            p.setTitle(stringPresent(idf.protocolName, i));
             p.setType(stringPresent(idf.protocolType, i));
             p.setDescription(stringPresent(idf.protocolDescription, i));
 
@@ -378,8 +395,10 @@ public class AeMageTabConverter {
             buildSingleAttribute("parameters", stringPresent(idf.protocolParameters, i), p);
             buildSingleAttribute("contact", stringPresent(idf.protocolContact, i), p);
 
-            protocols.getProtocols().add(p);
+            protocols.add(p);
         }
+
+        return protocols;
     }
 
     void buildPublications(IDF idf, Publications ations) {
@@ -426,8 +445,6 @@ public class AeMageTabConverter {
         study.setReleaseDate(publicReleaseDate);
 
         buildPublications(idf, study);
-
-        buildProtocols(idf, study);
 
         buildContacts(idf, study);
 
