@@ -106,7 +106,7 @@ public class AeMageTabConverter {
                 assay.getDomain().setName(studyRef.getDomain());
                 assay.setAlias(studyRef.getAlias() + '~' + node.getNodeName());
                 assay.setStudyRef(studyRef);
-                assay.setSampleRef((SampleRef) sample.asRef());
+                assay.getSampleUses().add(new SampleUse((SampleRef) sample.asRef()));
                 assay.setArchive(Archive.ArrayExpress);
 
                 submission.getAssays().add(assay);
