@@ -263,7 +263,7 @@ public class AeMageTabConverter {
         Sample sample = new Sample();
         sample.setDomain(new Domain());
         sample.getDomain().setName(studyRef.getDomain());
-        sample.setArchive(Archive.Usi);
+        sample.setArchive(Archive.BioSamples);
 
         String nodeName = sourceNode.getNodeName();
         sample.setTitle(nodeName);
