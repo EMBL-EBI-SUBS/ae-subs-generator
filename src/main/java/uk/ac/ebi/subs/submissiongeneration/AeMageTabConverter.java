@@ -16,7 +16,6 @@ import uk.ac.ebi.arrayexpress2.magetab.exception.ParseException;
 import uk.ac.ebi.arrayexpress2.magetab.parser.MAGETABParser;
 import uk.ac.ebi.ena.taxonomy.client.TaxonomyClient;
 import uk.ac.ebi.ena.taxonomy.client.model.Taxon;
-import uk.ac.ebi.subs.data.FullSubmission;
 import uk.ac.ebi.subs.data.Submission;
 import uk.ac.ebi.subs.data.component.*;
 import uk.ac.ebi.subs.data.submittable.*;
@@ -43,22 +42,22 @@ public class AeMageTabConverter {
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
     SimpleDateFormat alternateSdf = new SimpleDateFormat("dd/MM/yyyy");
 
-    public FullSubmission mageTabToSubmission(URL mageTabUrl) throws ParseException {
+    public Submission mageTabToSubmission(URL mageTabUrl) throws ParseException {
         MAGETABParser parser = new MAGETABParser();
 
         MAGETABInvestigation investigation = parser.parse(mageTabUrl);
 
-        FullSubmission submission = mageTabToSubmission(investigation);
+        Submission submission = mageTabToSubmission(investigation);
 
         return submission;
     }
 
-    public FullSubmission mageTabToSubmission(MAGETABInvestigation investigation) {
+    public Submission mageTabToSubmission(MAGETABInvestigation investigation) {
         return createSubmission(investigation);
     }
 
-    FullSubmission createSubmission(MAGETABInvestigation investigation) {
-        FullSubmission submission = new FullSubmission();
+    Submission createSubmission(MAGETABInvestigation investigation) {
+        Submission submission = new Submission();
 
         List<Protocol> protocols = buildProtocols(investigation.IDF);
         submission.getProtocols().addAll(protocols);
@@ -92,7 +91,7 @@ public class AeMageTabConverter {
         return submission;
     }
 
-    void convertSdrf(SDRF sdrf, FullSubmission submission, StudyRef studyRef, Map<String, String> protocolTypes) {
+    void convertSdrf(SDRF sdrf, Submission submission, StudyRef studyRef, Map<String, String> protocolTypes) {
 
         Collection<SourceNode> rootNodes = (Collection<SourceNode>) sdrf.getRootNodes();
 

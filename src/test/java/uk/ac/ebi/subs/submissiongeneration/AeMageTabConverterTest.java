@@ -5,7 +5,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import uk.ac.ebi.subs.data.FullSubmission;
+
 import uk.ac.ebi.subs.data.submittable.Sample;
 import uk.ac.ebi.subs.data.Submission;
 
@@ -29,7 +29,7 @@ public class AeMageTabConverterTest {
         ClassLoader classLoader = getClass().getClassLoader();
         File file = new File(classLoader.getResource("E-MTAB-4222.idf.txt").getFile());
 
-        FullSubmission sub = aeMageTabConverter.mageTabToSubmission(file.toURI().toURL());
+        Submission sub = aeMageTabConverter.mageTabToSubmission(file.toURI().toURL());
 
         assertThat("Studies expected", sub.getStudies().size(), equalTo(1));
         assertThat("Samples expected", sub.getSamples().size(), equalTo(72));
