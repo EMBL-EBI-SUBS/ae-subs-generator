@@ -79,8 +79,8 @@ public class AeMageTabConverter {
         for (Protocol p : protocols){
             p.setDomain(submission.getDomain());
             ProtocolRef pr = (ProtocolRef)p.asRef();
-            pr.setReferencedObject(p);
             study.getProtocolRefs().add(pr);
+            submission.getProtocols().add(p);
         }
 
 
