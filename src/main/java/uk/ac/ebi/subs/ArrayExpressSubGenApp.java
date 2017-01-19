@@ -30,7 +30,6 @@ import java.util.Date;
  * Would retreive all submissions from 2015
  */
 @SpringBootApplication
-@EnableCaching
 public class ArrayExpressSubGenApp implements CommandLineRunner {
 
     private static final Logger logger = LoggerFactory.getLogger(ArrayExpressSubGenApp.class);
