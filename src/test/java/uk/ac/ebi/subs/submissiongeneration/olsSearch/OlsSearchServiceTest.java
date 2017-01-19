@@ -30,10 +30,10 @@ public class OlsSearchServiceTest {
     public void testQueryUrl() throws MalformedURLException, UnsupportedEncodingException {
         String query = "bob";
 
-        String expectedQueryUrl = "http://www.ebi.ac.uk/ols/api/search?q=bob";
+        String expectedQueryUrl = "http://www.ebi.ac.uk/ols/api/search?q=bob&fieldList=iri";
 
 
-        HttpRequest request = olsSearchService.formQueryUrl(query);
+        HttpRequest request = olsSearchService.formQueryRequest(query,false);
         String queryUrl = request.getUrl();
 
         assertThat(queryUrl, notNullValue());
@@ -44,9 +44,9 @@ public class OlsSearchServiceTest {
     public void testEscapedQueryUrl() throws MalformedURLException, UnsupportedEncodingException {
         String query = "bob bob";
 
-        String expectedQueryUrl = "http://www.ebi.ac.uk/ols/api/search?q=bob+bob";
+        String expectedQueryUrl = "http://www.ebi.ac.uk/ols/api/search?q=bob+bob&fieldList=iri";
 
-        HttpRequest request = olsSearchService.formQueryUrl(query);
+        HttpRequest request = olsSearchService.formQueryRequest(query,false);
         String queryUrl = request.getUrl();
 
         assertThat(queryUrl, notNullValue());

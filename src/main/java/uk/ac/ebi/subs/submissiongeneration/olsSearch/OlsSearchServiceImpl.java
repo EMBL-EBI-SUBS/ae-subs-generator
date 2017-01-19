@@ -9,9 +9,11 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 public class OlsSearchServiceImpl implements OlsSearchService {
@@ -19,14 +21,51 @@ public class OlsSearchServiceImpl implements OlsSearchService {
     private static final Logger logger = LoggerFactory.getLogger(OlsSearchServiceImpl.class);
 
     private String olsApiSearchUrl = "http://www.ebi.ac.uk/ols/api/search";
-
+    private Map<String, String> cache = new ConcurrentHashMap<>();
 
     @Override
-    @Cacheable("olsUri")
     public String fetchUriForQuery(String query) {
-        logger.info("Looking up term URI for {}",query);
+        Assert.notNull(query);
 
-        HttpRequest req = formQueryUrl(query);
+        String uri;
+
+        if (cache.containsKey(query)) {
+            logger.info("Cache hit for query {}",query);
+            uri = cache.get(query);
+        }
+        else {
+            logger.info("Cache miss for query {}",query);
+            uri = realFetchUriForQuery(query);
+
+            if (uri == null) {
+                logger.error("no response for query {}", query);
+                uri = "IAMTHENULLVALUE";
+            }
+
+            cache.put(query, uri);
+        }
+
+        if (uri == "IAMTHENULLVALUE"){
+            uri = null;
+        }
+
+        return uri;
+    }
+
+
+    private String realFetchUriForQuery(String query) {
+        logger.info("Looking up term URI for {}", query);
+
+        String uri = makeQuery(query, false);
+        if (uri == null) {
+            uri = makeQuery(query, true);
+        }
+
+        return uri;
+    }
+
+    private String makeQuery(String query, boolean includeObsoletes) {
+        HttpRequest req = formQueryRequest(query, includeObsoletes);
         HttpResponse<JsonNode> resp = null;
 
         String uri = null;
@@ -41,13 +80,20 @@ public class OlsSearchServiceImpl implements OlsSearchService {
         if (resp.getStatus() == 200) {
             uri = findTermUri(resp.getBody());
         }
-        logger.info("Found term URI {} for {}",uri, query);
+        logger.info("Found term URI {} for {}", uri, query);
         return uri;
     }
 
-    protected HttpRequest formQueryUrl(String query) {
-        return Unirest.get(olsApiSearchUrl)
-                .queryString("q", query);
+    protected HttpRequest formQueryRequest(String query, boolean includeObsoletes) {
+        HttpRequest req = Unirest.get(olsApiSearchUrl)
+                .queryString("q", query)
+                .queryString("fieldList", "iri");
+
+        if (includeObsoletes) {
+            req.queryString("obsoletes", "true");
+        }
+
+        return req;
     }
 
     protected String findTermUri(JsonNode node) {

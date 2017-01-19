@@ -320,7 +320,7 @@ public class AeMageTabConverter {
             a.setUnits(characteristic.unit.getAttributeValue());
         }
 
-        if (characteristic.termAccessionNumber != null) {
+        if (characteristic.termAccessionNumber != null && !characteristic.termAccessionNumber.isEmpty()) {
 
 
             String termUri = olsSearchService.fetchUriForQuery(characteristic.termAccessionNumber);
@@ -340,14 +340,20 @@ public class AeMageTabConverter {
             a.setName(attributeName);
             a.setValue(values.get(i));
 
-            String termUri = olsSearchService.fetchUriForQuery(stringPresent(termIds, i));
+            String termId = stringPresent(termIds, i);
+
+            if (termId != null && !termId.isEmpty()){
+                String termUri = olsSearchService.fetchUriForQuery(termId);
 
 
-            if (termUri != null) {
-                Term t = new Term();
-                t.setUrl(termUri);
-                a.getTerms().add(t);
+                if (termUri != null) {
+                    Term t = new Term();
+                    t.setUrl(termUri);
+                    a.getTerms().add(t);
+                }
             }
+
+
 
             submittable.getAttributes().add(a);
         }
