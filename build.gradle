@@ -13,6 +13,7 @@ dependencies {
     compile("org.springframework.boot:spring-boot-starter-cache")
     compile("com.fasterxml.jackson.core:jackson-databind")
 
+    compile 'com.mashape.unirest:unirest-java:1.4.9'
     compile(group: 'uk.ac.ebi.ena.taxonomy', name: 'ena-taxonomy-client', version: '2.1.2')
 
     compile fileTree(dir: 'libs', include: '*.jar')

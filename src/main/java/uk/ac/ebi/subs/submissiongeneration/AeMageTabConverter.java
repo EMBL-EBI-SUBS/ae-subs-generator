@@ -17,9 +17,9 @@ import uk.ac.ebi.arrayexpress2.magetab.parser.MAGETABParser;
 import uk.ac.ebi.ena.taxonomy.client.TaxonomyClient;
 import uk.ac.ebi.ena.taxonomy.client.model.Taxon;
 import uk.ac.ebi.subs.data.FullSubmission;
-import uk.ac.ebi.subs.data.Submission;
 import uk.ac.ebi.subs.data.component.*;
 import uk.ac.ebi.subs.data.submittable.*;
+import uk.ac.ebi.subs.submissiongeneration.olsSearch.OlsSearchService;
 
 import java.net.URL;
 import java.text.SimpleDateFormat;
@@ -29,6 +29,9 @@ import java.util.*;
 public class AeMageTabConverter {
 
     private static final Logger logger = LoggerFactory.getLogger(ArrayExpressSubmissionGenerationService.class);
+
+    @Autowired
+    OlsSearchService olsSearchService;
 
     @Autowired
     TaxonomyClient taxonomyClient;
@@ -292,10 +295,13 @@ public class AeMageTabConverter {
             a.setValue(sourceNode.materialType.getAttributeValue());
 
             if (sourceNode.materialType.termAccessionNumber != null) {
+                //TODO
                 Term t = new Term();
+                /*
                 t.setTermID(sourceNode.materialType.termAccessionNumber);
                 t.setSourceName(sourceNode.materialType.termSourceREF);
                 a.setTerm(t);
+                */
             }
 
             sample.getAttributes().add(a);
@@ -315,10 +321,14 @@ public class AeMageTabConverter {
         }
 
         if (characteristic.termAccessionNumber != null) {
-            Term t = new Term();
-            t.setTermID(characteristic.termAccessionNumber);
-            t.setSourceName(characteristic.termSourceREF);
-            a.setTerm(t);
+
+
+            String termUri = olsSearchService.fetchUriForQuery(characteristic.termAccessionNumber);
+            if (termUri != null) {
+                Term t = new Term();
+                t.setUrl(termUri);
+                a.getTerms().add(t);
+            }
         }
 
         attributes.getAttributes().add(a);
@@ -330,14 +340,13 @@ public class AeMageTabConverter {
             a.setName(attributeName);
             a.setValue(values.get(i));
 
-            Term t = new Term();
-
-            t.setSourceName(stringPresent(termRefs, i));
-            t.setTermID(stringPresent(termIds, i));
+            String termUri = olsSearchService.fetchUriForQuery(stringPresent(termIds, i));
 
 
-            if (t.getSourceName() != null || t.getTermID() != null) {
-                a.setTerm(t);
+            if (termUri != null) {
+                Term t = new Term();
+                t.setUrl(termUri);
+                a.getTerms().add(t);
             }
 
             submittable.getAttributes().add(a);
