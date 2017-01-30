@@ -1,5 +1,6 @@
 package uk.ac.ebi.subs.submissiongeneration;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.any23.encoding.TikaEncodingDetector;
 import org.slf4j.Logger;
@@ -175,6 +176,8 @@ public class ArrayExpressSubmissionGenerationService implements SubmissionGenera
 
         String fileName = dirName + File.separator + accession + "." + releaseDate.getTime() + ".json";
         File outputFile = new File(fileName);
+
+        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
 
         System.out.println("Writing " + outputFile.getAbsolutePath().toString());
         objectMapper.writeValue(outputFile, submission);
