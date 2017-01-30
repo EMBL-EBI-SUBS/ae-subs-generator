@@ -21,6 +21,7 @@ import uk.ac.ebi.subs.data.component.*;
 import uk.ac.ebi.subs.data.submittable.*;
 import uk.ac.ebi.subs.submissiongeneration.olsSearch.OlsSearchService;
 
+import javax.swing.text.html.Option;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -70,7 +71,13 @@ public class AeMageTabConverter {
 
         Map<String, String> protocolTypes = new HashMap<>();
         for (Protocol protocol : protocols) {
-            protocolTypes.put(protocol.getTitle(), protocol.getType());
+            protocol.getAttributes().stream()
+                    .filter(attr -> attr.getName().equals("type"))
+                    .findFirst()
+                    .ifPresent(attr ->
+                        protocolTypes.put(protocol.getTitle(), attr.getValue())
+                    );
+
         }
 
         Optional<Contact> firstContact = study.getContacts().stream().filter(c -> c.getEmail() != null).findFirst();
@@ -403,9 +410,10 @@ public class AeMageTabConverter {
             p.setArchive(Archive.ArrayExpress);
 
             p.setTitle(stringPresent(idf.protocolName, i));
-            p.setType(stringPresent(idf.protocolType, i));
             p.setDescription(stringPresent(idf.protocolDescription, i));
 
+
+            buildSingleAttribute("type",stringPresent(idf.protocolType, i),p);
             buildSingleAttribute("hardware", stringPresent(idf.protocolHardware, i), p);
             buildSingleAttribute("software", stringPresent(idf.protocolSoftware, i), p);
             buildSingleAttribute("parameters", stringPresent(idf.protocolParameters, i), p);
