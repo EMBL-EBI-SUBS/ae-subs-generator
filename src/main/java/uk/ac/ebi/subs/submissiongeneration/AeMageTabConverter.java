@@ -82,8 +82,12 @@ public class AeMageTabConverter {
 
         Optional<Contact> firstContact = study.getContacts().stream().filter(c -> c.getEmail() != null).findFirst();
         if (firstContact.isPresent()) {
-            submission.getDomain().setName(firstContact.get().getEmail());
-            submission.getSubmitter().setEmail(firstContact.get().getEmail());
+            String email = firstContact.get().getEmail();
+
+            String domainName = email.replaceAll("[\\.@]","-");
+
+            submission.getDomain().setName(domainName);
+            submission.getSubmitter().setEmail(email);
             study.setDomain(submission.getDomain());
         }
 
