@@ -21,7 +21,6 @@ import uk.ac.ebi.subs.data.component.*;
 import uk.ac.ebi.subs.data.submittable.*;
 import uk.ac.ebi.subs.submissiongeneration.olsSearch.OlsSearchService;
 
-import javax.swing.text.html.Option;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -84,15 +83,15 @@ public class AeMageTabConverter {
         if (firstContact.isPresent()) {
             String email = firstContact.get().getEmail();
 
-            String domainName = email.replaceAll("[\\.@]","-");
+            String teamName = email.replaceAll("[\\.@]","-");
 
-            submission.getDomain().setName(domainName);
+            submission.getTeam().setName(teamName);
             submission.getSubmitter().setEmail(email);
-            study.setDomain(submission.getDomain());
+            study.setTeam(submission.getTeam());
         }
 
         for (Protocol p : protocols){
-            p.setDomain(submission.getDomain());
+            p.setTeam(submission.getTeam());
             ProtocolRef pr = (ProtocolRef)p.asRef();
             study.getProtocolRefs().add(pr);
             submission.getProtocols().add(p);
@@ -117,8 +116,8 @@ public class AeMageTabConverter {
 
             for (Node childNode : node.getChildNodes()) {
                 Assay assay = new Assay();
-                assay.setDomain(new Domain());
-                assay.getDomain().setName(studyRef.getDomain());
+                assay.setTeam(new Team());
+                assay.getTeam().setName(studyRef.getTeam());
                 assay.setAlias(studyRef.getAlias() + '~' + node.getNodeName());
                 assay.setStudyRef(studyRef);
                 assay.getSampleUses().add(new SampleUse((SampleRef) sample.asRef()));
@@ -264,7 +263,7 @@ public class AeMageTabConverter {
     AssayData assayData(Assay assay, Collection<AssayData> assayData) {
         AssayData ad = new AssayData();
 
-        ad.setDomain(assay.getDomain());
+        ad.setTeam(assay.getTeam());
         ad.setArchive(Archive.ArrayExpress);
         ad.setAssayRef((AssayRef) assay.asRef());
         ad.setAlias(assay.getAlias() + '~' + assayData.size() + 1);
@@ -276,8 +275,8 @@ public class AeMageTabConverter {
 
     Sample sampleFromNode(SourceNode sourceNode, AbstractSubsRef<Study> studyRef) {
         Sample sample = new Sample();
-        sample.setDomain(new Domain());
-        sample.getDomain().setName(studyRef.getDomain());
+        sample.setTeam(new Team());
+        sample.getTeam().setName(studyRef.getTeam());
         sample.setArchive(Archive.BioSamples);
 
         String nodeName = sourceNode.getNodeName();
