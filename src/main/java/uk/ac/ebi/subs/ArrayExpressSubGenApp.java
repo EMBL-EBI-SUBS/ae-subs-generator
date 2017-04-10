@@ -37,13 +37,13 @@ public class ArrayExpressSubGenApp implements CommandLineRunner {
     @Autowired
     ArrayExpressSubmissionGenerationService submissionGenerationService;
 
-    @Value("${targetDir:/Users/davidr/ArrayExpressSubs}")
+    @Value("${targetDir:.}")
     String targetDir;
 
-    @Value("${startDate:2015-01-01}")
+    @Value("${startDate:.}")
     String startDate;
 
-    @Value("${endDate:2017-03-07}")
+    @Value("${endDate:.}")
     String endDate;
 
     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
