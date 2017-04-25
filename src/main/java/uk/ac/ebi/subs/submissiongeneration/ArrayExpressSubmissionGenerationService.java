@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import uk.ac.ebi.subs.data.Submission;
+import uk.ac.ebi.subs.processing.SubmissionEnvelope;
 import uk.ac.ebi.subs.submissiongeneration.ArrayExpressModel.ArrayExpressFilesResponse;
 
 import java.io.*;
@@ -107,9 +107,9 @@ public class ArrayExpressSubmissionGenerationService implements SubmissionGenera
         String url = "http://www.ebi.ac.uk/arrayexpress/json/v2/files/" + accession;
         ArrayExpressFilesResponse response = restTemplate.getForObject(url, ArrayExpressFilesResponse.class);
 
-        Submission submission = aeMageTabConverter.mageTabToSubmission(response.idfUrl(accession));
+        SubmissionEnvelope submissionEnvelope = aeMageTabConverter.mageTabToSubmissionEnvelope(response.idfUrl(accession));
 
-        writeSubmission(submission, accession, targetDir, releaseDate);
+        writeSubmission(submissionEnvelope, accession, targetDir, releaseDate);
     }
 
     public java.io.File downloadTsv() throws IOException {
@@ -163,7 +163,7 @@ public class ArrayExpressSubmissionGenerationService implements SubmissionGenera
         return cs;
     }
 
-    public void writeSubmission(Submission submission, String accession, Path rootTargetDir, Date releaseDate) throws IOException {
+    public void writeSubmission(SubmissionEnvelope submissionEnvelope, String accession, Path rootTargetDir, Date releaseDate) throws IOException {
 
         String year = yearSdf.format(releaseDate);
         String week = weekInYearSdf.format(releaseDate);
@@ -180,7 +180,7 @@ public class ArrayExpressSubmissionGenerationService implements SubmissionGenera
         objectMapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
 
         System.out.println("Writing " + outputFile.getAbsolutePath().toString());
-        objectMapper.writeValue(outputFile, submission);
+        objectMapper.writeValue(outputFile, submissionEnvelope);
         logger.debug("Output target: {}", outputFile);
 
     }

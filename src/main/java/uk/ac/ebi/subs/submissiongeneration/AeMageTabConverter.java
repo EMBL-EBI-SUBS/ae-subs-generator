@@ -16,9 +16,10 @@ import uk.ac.ebi.arrayexpress2.magetab.exception.ParseException;
 import uk.ac.ebi.arrayexpress2.magetab.parser.MAGETABParser;
 import uk.ac.ebi.ena.taxonomy.client.TaxonomyClient;
 import uk.ac.ebi.ena.taxonomy.client.model.Taxon;
-import uk.ac.ebi.subs.data.FullSubmission;
+import uk.ac.ebi.subs.data.Submission;
 import uk.ac.ebi.subs.data.component.*;
 import uk.ac.ebi.subs.data.submittable.*;
+import uk.ac.ebi.subs.processing.SubmissionEnvelope;
 import uk.ac.ebi.subs.submissiongeneration.olsSearch.OlsSearchService;
 
 import java.net.URL;
@@ -46,25 +47,25 @@ public class AeMageTabConverter {
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
     SimpleDateFormat alternateSdf = new SimpleDateFormat("dd/MM/yyyy");
 
-    public FullSubmission mageTabToSubmission(URL mageTabUrl) throws ParseException {
+    public SubmissionEnvelope mageTabToSubmissionEnvelope(URL mageTabUrl) throws ParseException {
         MAGETABParser parser = new MAGETABParser();
 
         MAGETABInvestigation investigation = parser.parse(mageTabUrl);
 
-        FullSubmission submission = mageTabToSubmission(investigation);
+        SubmissionEnvelope submissionEnvelope = mageTabToSubmissionEnvelope(investigation);
 
-        return submission;
+        return submissionEnvelope;
     }
 
-    public FullSubmission mageTabToSubmission(MAGETABInvestigation investigation) {
-        return createSubmission(investigation);
+    public SubmissionEnvelope mageTabToSubmissionEnvelope(MAGETABInvestigation investigation) {
+        return createSubmissionEnvelope(investigation);
     }
 
-    FullSubmission createSubmission(MAGETABInvestigation investigation) {
-        FullSubmission submission = new FullSubmission();
+    SubmissionEnvelope createSubmissionEnvelope(MAGETABInvestigation investigation) {
+        SubmissionEnvelope submissionEnvelope = new SubmissionEnvelope(new Submission());
 
         List<Protocol> protocols = buildProtocols(investigation.IDF);
-        submission.getProtocols().addAll(protocols);
+        submissionEnvelope.getProtocols().addAll(protocols);
 
         Study study = createStudy(investigation.IDF);
 
@@ -80,39 +81,40 @@ public class AeMageTabConverter {
         }
 
         Optional<Contact> firstContact = study.getContacts().stream().filter(c -> c.getEmail() != null).findFirst();
+        Team team = submissionEnvelope.getSubmission().getTeam();
         if (firstContact.isPresent()) {
             String email = firstContact.get().getEmail();
 
             String teamName = email.replaceAll("[\\.@]","-");
 
-            submission.getTeam().setName(teamName);
-            submission.getSubmitter().setEmail(email);
-            study.setTeam(submission.getTeam());
+            team.setName(teamName);
+            submissionEnvelope.getSubmission().getSubmitter().setEmail(email);
+            study.setTeam(team);
         }
 
         for (Protocol p : protocols){
-            p.setTeam(submission.getTeam());
+            p.setTeam(team);
             ProtocolRef pr = (ProtocolRef)p.asRef();
             study.getProtocolRefs().add(pr);
-            submission.getProtocols().add(p);
+            submissionEnvelope.getProtocols().add(p);
         }
 
 
-        submission.getStudies().add(study);
+        submissionEnvelope.getStudies().add(study);
 
-        convertSdrf(investigation.SDRF, submission, (StudyRef)study.asRef(), protocolTypes);
+        convertSdrf(investigation.SDRF, submissionEnvelope, (StudyRef)study.asRef(), protocolTypes);
 
-        return submission;
+        return submissionEnvelope;
     }
 
-    void convertSdrf(SDRF sdrf, FullSubmission submission, StudyRef studyRef, Map<String, String> protocolTypes) {
+    void convertSdrf(SDRF sdrf, SubmissionEnvelope submissionEnvelope, StudyRef studyRef, Map<String, String> protocolTypes) {
 
         Collection<SourceNode> rootNodes = (Collection<SourceNode>) sdrf.getRootNodes();
 
 
         for (SourceNode node : rootNodes) {
             Sample sample = sampleFromNode(node, studyRef);
-            submission.getSamples().add(sample);
+            submissionEnvelope.getSamples().add(sample);
 
             for (Node childNode : node.getChildNodes()) {
                 Assay assay = new Assay();
@@ -123,12 +125,12 @@ public class AeMageTabConverter {
                 assay.getSampleUses().add(new SampleUse((SampleRef) sample.asRef()));
                 assay.setArchive(Archive.ArrayExpress);
 
-                submission.getAssays().add(assay);
+                submissionEnvelope.getAssays().add(assay);
 
                 Collection<AssayData> assayData = new ArrayList<>();
                 traverseAssayNodes(assay, childNode, assayData, 0, protocolTypes);
 
-                submission.getAssayData().addAll(assayData);
+                submissionEnvelope.getAssayData().addAll(assayData);
             }
         }
     }

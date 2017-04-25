@@ -8,6 +8,7 @@ jar {
 
 dependencies {
     compile project(':subs-data-model')
+    compile project(':subs-processing-model')
 
     compile("org.springframework.boot:spring-boot-starter")
     compile("org.springframework.boot:spring-boot-starter-logging")
