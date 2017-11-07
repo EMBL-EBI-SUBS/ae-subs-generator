@@ -20,7 +20,7 @@ public class OlsSearchServiceImpl implements OlsSearchService {
 
     private static final Logger logger = LoggerFactory.getLogger(OlsSearchServiceImpl.class);
 
-    private String olsApiSearchUrl = "http://www.ebi.ac.uk/ols/api/search";
+    private String olsApiSearchUrl = "https://www.ebi.ac.uk/ols/api/search";
     private Map<String, String> cache = new ConcurrentHashMap<>();
 
     @Override

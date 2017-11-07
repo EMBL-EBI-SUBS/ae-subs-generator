@@ -18,7 +18,7 @@ import java.util.Map;
 public class TaxonomyClientConfig {
 
 
-    @Value("${taxonomyServiceUrl:http://www.ebi.ac.uk/ena/data/taxonomy}")
+    @Value("${taxonomyServiceUrl:https://www.ebi.ac.uk/ena/data/taxonomy}")
     String taxonomyServiceUrl;
 
     static Logger logger = LoggerFactory.getLogger(TaxonomyClientConfig.class);

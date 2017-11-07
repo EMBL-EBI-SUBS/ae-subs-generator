@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.util.Pair;
+import org.springframework.http.HttpEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import uk.ac.ebi.subs.processing.SubmissionEnvelope;
@@ -104,8 +105,13 @@ public class ArrayExpressSubmissionGenerationService implements SubmissionGenera
     public void processAccDate(String accession, Date releaseDate, Path targetDir) throws IOException, uk.ac.ebi.arrayexpress2.magetab.exception.ParseException, ParseException {
         logger.debug(String.join("\t", accession, releaseDate.toString(), targetDir.toString()));
 
-        String url = "http://www.ebi.ac.uk/arrayexpress/json/v2/files/" + accession;
+        String url = "https://www.ebi.ac.uk/arrayexpress/json/v2/files/" + accession;
         ArrayExpressFilesResponse response = restTemplate.getForObject(url, ArrayExpressFilesResponse.class);
+
+        if (response == null){
+            HttpEntity<String> stringResponse = restTemplate.getForEntity(url,String.class);
+            System.out.println(stringResponse);
+        }
 
         SubmissionEnvelope submissionEnvelope = aeMageTabConverter.mageTabToSubmissionEnvelope(response.idfUrl(accession));
 
