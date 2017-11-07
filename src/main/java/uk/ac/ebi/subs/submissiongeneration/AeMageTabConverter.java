@@ -24,6 +24,7 @@ import uk.ac.ebi.subs.submissiongeneration.olsSearch.OlsSearchService;
 
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.*;
 
 @Component
@@ -123,7 +124,7 @@ public class AeMageTabConverter {
                 assay.setAlias(studyRef.getAlias() + '~' + node.getNodeName());
                 assay.setStudyRef(studyRef);
                 assay.getSampleUses().add(new SampleUse((SampleRef) sample.asRef()));
-                assay.setArchive(Archive.ArrayExpress);
+
 
                 submissionEnvelope.getAssays().add(assay);
 
@@ -266,7 +267,6 @@ public class AeMageTabConverter {
         AssayData ad = new AssayData();
 
         ad.setTeam(assay.getTeam());
-        ad.setArchive(Archive.ArrayExpress);
         ad.setAssayRef((AssayRef) assay.asRef());
         ad.setAlias(assay.getAlias() + '~' + assayData.size() + 1);
 
@@ -279,7 +279,6 @@ public class AeMageTabConverter {
         Sample sample = new Sample();
         sample.setTeam(new Team());
         sample.getTeam().setName(studyRef.getTeam());
-        sample.setArchive(Archive.BioSamples);
 
         String nodeName = sourceNode.getNodeName();
         sample.setTitle(nodeName);
@@ -412,8 +411,6 @@ public class AeMageTabConverter {
 
             p.setAlias(UUID.randomUUID().toString());
 
-            p.setArchive(Archive.ArrayExpress);
-
             p.setTitle(stringPresent(idf.protocolName, i));
             p.setDescription(stringPresent(idf.protocolDescription, i));
 
@@ -453,13 +450,14 @@ public class AeMageTabConverter {
     Study createStudy(IDF idf) {
         Study study = new Study();
 
-        study.setArchive(Archive.ArrayExpress);
+        study.setStudyType(StudyDataType.FunctionalGenomics);
         study.setAlias(idf.accession);
 
         study.setTitle(idf.investigationTitle);
         study.setDescription(idf.experimentDescription);
 
         Date publicReleaseDate;
+
         try {
             publicReleaseDate = sdf.parse(idf.publicReleaseDate);
         } catch (java.text.ParseException e) {
@@ -469,9 +467,10 @@ public class AeMageTabConverter {
             catch(java.text.ParseException e2) {
                 throw new RuntimeException("Could not parse date "+idf.publicReleaseDate+" with patterns yyyy-MM-dd or dd/MM/yyyy",e2);
             }
-
         }
-        study.setReleaseDate(publicReleaseDate);
+        LocalDate releaseDate = new java.sql.Date(publicReleaseDate.getTime()).toLocalDate();
+
+        study.setReleaseDate(releaseDate);
 
         buildPublications(idf, study);
 
